@@ -11,14 +11,11 @@ export default function Sidebar() {
     if (!collegeId) return;
     (async () => {
       try {
-        const res = await fetch(
-          `http://localhost:8080/classes?collegeId=${collegeId}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
+        const res = await fetch(`/api/classes?collegeId=${collegeId}`, {
+          headers: {
+            "Content-Type": "application/json",
           },
-        );
+        });
 
         const data = (await res.json()) as Lesson[];
         setAvailableLessons(data);
