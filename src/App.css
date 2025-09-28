@@ -270,7 +270,7 @@ button {
 
       input {
         background-color: var(--primary);
-        color: var(--secondery);
+        color: var(--font-color);
         outline: none;
         border: none;
         border-radius: 0.25rem;
@@ -283,7 +283,7 @@ button {
     .add {
       outline: none;
       border: none;
-      color: var(--secondery);
+      color: var(--font-color);
       padding: 0.25rem;
       border-radius: 0.5rem;
       display: flex;
@@ -309,7 +309,7 @@ button {
     border: none;
     background-color: var(--primary);
     border-radius: 0.5rem;
-    color: var(--secondery);
+    color: var(--font-color);
     padding-block: 0.1rem;
   }
 }
