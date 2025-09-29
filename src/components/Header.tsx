@@ -3,8 +3,8 @@ export default function Header() {
     <header className="header">
       <div className="social-link"></div>
       <div className="logo">
-        <span>Wahd</span>
-        <img />
+        <span>Kntu Vahed</span>
+        <img src="/imgs/kntu-logo.png" />
       </div>
     </header>
   );

@@ -49,6 +49,18 @@ button {
   background-color: var(--primary);
   color: var(--font-color);
   padding: 0.5rem;
+
+  .logo {
+    display: flex;
+    gap: 0.5rem;
+    height: 100%;
+    align-items: center;
+
+    img {
+      width: 2rem;
+      aspect-ratio: 1/1;
+    }
+  }
 }
 
 .main {
@@ -267,6 +279,7 @@ button {
     .times {
       display: flex;
       gap: 0.25rem;
+      color: white;
 
       input {
         background-color: var(--primary);

@@ -4,18 +4,22 @@ import LessonItem from "./LessonItem";
 // import data from "../../data.json";
 
 export default function Sidebar() {
-  const [collegeId, setCollegeId] = useState("");
+  const [collegeIdAndGender, setCollegeIdAndGender] = useState("");
   const [availableLessons, setAvailableLessons] = useState<Lesson[]>([]);
 
   useEffect(() => {
-    if (!collegeId) return;
+    if (!collegeIdAndGender) return;
+    const [collegeId, gender] = collegeIdAndGender.split("-");
     (async () => {
       try {
-        const res = await fetch(`/api/classes?collegeId=${collegeId}`, {
-          headers: {
-            "Content-Type": "application/json",
+        const res = await fetch(
+          `/api/classes?collegeId=${collegeId}&gender=${gender}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
 
         const data = (await res.json()) as Lesson[];
         setAvailableLessons(data);
@@ -23,29 +27,31 @@ export default function Sidebar() {
         setAvailableLessons([]);
       }
     })();
-  }, [collegeId]);
+  }, [collegeIdAndGender]);
 
   return (
     <aside className="sidebar">
       <select
         className="college-id-input"
-        value={collegeId}
-        onChange={(e) => setCollegeId(e.target.value)}
+        value={collegeIdAndGender}
+        onChange={(e) => setCollegeIdAndGender(e.target.value)}
       >
         <option value="">دانشکده</option>
-        <option value="11">مهندسی برق</option>
-        <option value="19">مهندسی کامپیوتر</option>
-        <option value="22">مهندسی عمران</option>
-        <option value="33">مهندسی مکانیک</option>
-        <option value="42">فیزیک</option>
-        <option value="44">علوم</option>
-        <option value="48">شیمی</option>
-        <option value="55">عمومی(مردان)</option>
-        <option value="57">ریاضی</option>
-        <option value="66">صنایع</option>
-        <option value="77">مهندسی نقشه برداری</option>
-        <option value="88">مهندسی هوافضا</option>
-        <option value="99">مهندسی و علم مواد</option>
+        <option value="11-1">مهندسی برق</option>
+        <option value="19-1">مهندسی کامپیوتر</option>
+        <option value="22-1">مهندسی عمران</option>
+        <option value="33-1">مهندسی مکانیک</option>
+        <option value="42-1">فیزیک(مردان)</option>
+        <option value="42-0">فیزیک(بانوان)</option>
+        <option value="44-1">علوم</option>
+        <option value="48-1">شیمی</option>
+        <option value="55-1">عمومی(مردان)</option>
+        <option value="55-0">عمومی(بانوان)</option>
+        <option value="57-1">ریاضی</option>
+        <option value="66-1">صنایع</option>
+        <option value="77-1">مهندسی نقشه برداری</option>
+        <option value="88-1">مهندسی هوافضا</option>
+        <option value="99-1">مهندسی و علم مواد</option>
       </select>
       <div className="lessons">
         {availableLessons.map((lesson) => (
