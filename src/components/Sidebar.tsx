@@ -6,6 +6,7 @@ import LessonItem from "./LessonItem";
 export default function Sidebar() {
   const [collegeIdAndGender, setCollegeIdAndGender] = useState("");
   const [availableLessons, setAvailableLessons] = useState<Lesson[]>([]);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     if (!collegeIdAndGender) return;
@@ -13,7 +14,7 @@ export default function Sidebar() {
     (async () => {
       try {
         const res = await fetch(
-          `/api/classes?collegeId=${collegeId}&gender=${gender}`,
+          `${apiUrl}/classes?collegeId=${collegeId}&gender=${gender}`,
           {
             headers: {
               "Content-Type": "application/json",
