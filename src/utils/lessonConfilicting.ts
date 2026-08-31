@@ -30,3 +30,25 @@ export const isLessonConflicting = (
     ),
   );
 };
+
+export type LessonConflictReason = "exam" | "schedule" | null;
+
+/** Presentation helper; it intentionally follows the existing conflict rules. */
+export const getLessonConflictReason = (
+  lesson: Lesson,
+  lessons: Lesson[],
+): LessonConflictReason => {
+  if (lessons.some((selected) => selected.examDate === lesson.examDate))
+    return "exam";
+  if (
+    lesson.classTime.some((schedule) =>
+      lessons.some((selected) =>
+        selected.classTime.some((selectedSchedule) =>
+          isscheduleConfilict(selectedSchedule, schedule),
+        ),
+      ),
+    )
+  )
+    return "schedule";
+  return null;
+};
