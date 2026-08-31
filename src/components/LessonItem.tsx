@@ -4,7 +4,7 @@ import type { Lesson } from "../types/lesson";
 import { getLessonConflictReason } from "../utils/lessonConfilicting";
 
 export default function LessonItem(props: Lesson) {
-  const { lessonsId, setLessonsId, setLessons, setHoveredLesson, lessons } = useLessonContext();
+  const { lessonsId, setLessons, setHoveredLesson, lessons } = useLessonContext();
   const lesson = props;
   const selected = lessonsId.has(lesson.id);
   const conflictReason = selected ? null : getLessonConflictReason(lesson, lessons);
@@ -13,12 +13,10 @@ export default function LessonItem(props: Lesson) {
 
   const toggleLesson = () => {
     if (selected) {
-      setLessonsId((state) => { const next = new Set(state); next.delete(lesson.id); return next; });
       setLessons((current) => current.filter((item) => item.id !== lesson.id));
       return;
     }
     if (conflicting) return;
-    setLessonsId((state) => new Set(state).add(lesson.id));
     setLessons((current) => [...current, lesson]);
   };
 
