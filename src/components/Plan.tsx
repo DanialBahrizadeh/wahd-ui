@@ -4,12 +4,17 @@ import { useLessonContext } from "../contexts/LessonContext";
 import type { Schedule } from "../types/lesson";
 import { isLessonConflicting } from "../utils/lessonConfilicting";
 import Lesson from "./Lesson";
+import CustomSelect from "./CustomSelect";
 
 const days = ["شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه"];
+const dayOptions = days.map((day, index) => ({ value: String(index), label: day }));
 const hours = Array.from({ length: 12 }, (_, index) => index + 7);
 
 export default function Plan() {
-  const { lessons, setLessons, lessonsId, hoveredLesson } = useLessonContext();
+  const {
+    lessons, setLessons, lessonsId, hoveredLesson, plans, activePlanId,
+    setActivePlanId, createPlan, removePlan,
+  } = useLessonContext();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [selectedLessonId, setSelectedLessonId] = useState<string | null>(null);
   const [newSchedule, setNewSchedule] = useState<Schedule>({ day: 0, start: 7, end: 9.5 });
@@ -17,6 +22,11 @@ export default function Plan() {
   useEffect(() => {
     if (selectedLessonId && !dialogRef.current?.open) dialogRef.current?.showModal();
   }, [selectedLessonId]);
+
+  useEffect(() => {
+    dialogRef.current?.close();
+    setSelectedLessonId(null);
+  }, [activePlanId]);
 
   const updateSchedule = (id: string, index: number, field: keyof Schedule, value: string) => {
     setLessons((current) => current.map((lesson) => lesson.id === id ? {
@@ -36,6 +46,13 @@ export default function Plan() {
   return <section className="plan" aria-labelledby="plan-title">
     <div className="plan-header">
       <div><span className="eyebrow">برنامه هفتگی</span><h2 id="plan-title">تقویم درسی</h2></div>
+      <div className="plan-tabs" role="tablist" aria-label="برنامه‌های درسی">
+        {plans.map((plan) => <div className={`plan-tab${plan.id === activePlanId ? " active" : ""}`} key={plan.id}>
+          <button type="button" role="tab" aria-selected={plan.id === activePlanId} onClick={() => setActivePlanId(plan.id)}>{plan.name}</button>
+          {plans.length > 1 && <button type="button" className="remove-plan" onClick={() => removePlan(plan.id)} aria-label={`حذف ${plan.name}`}><MdClose /></button>}
+        </div>)}
+        <button type="button" className="add-plan" onClick={createPlan} aria-label="ساخت برنامه جدید"><MdAdd /><span>برنامه جدید</span></button>
+      </div>
       <div className="legend" aria-label="راهنمای تقویم"><span><i className="selected-dot" />انتخاب‌شده</span><span><i className="preview-dot" />پیش‌نمایش</span><span><i className="conflict-dot" />تداخل</span></div>
     </div>
     <div className="calendar-scroll" tabIndex={0} aria-label="تقویم هفتگی؛ در نمایشگر کوچک امکان پیمایش افقی دارد">
@@ -66,5 +83,5 @@ function ScheduleRow({ schedule, onChange, onDelete }: { schedule: Schedule; onC
 }
 
 function ScheduleFields({ schedule, onChange }: { schedule: Schedule; onChange: (field: keyof Schedule, value: string) => void }) {
-  return <div className="times"><label>روز<select value={schedule.day} onChange={(event) => onChange("day", event.target.value)}>{days.map((day, index) => <option key={day} value={index}>{day}</option>)}</select></label><label>شروع<input type="number" min="7" max="18.5" step="0.5" value={schedule.start} onChange={(event) => onChange("start", event.target.value)} /></label><label>پایان<input type="number" min="7.5" max="19" step="0.5" value={schedule.end} onChange={(event) => onChange("end", event.target.value)} /></label></div>;
+  return <div className="times"><label>روز<CustomSelect value={String(schedule.day)} options={dayOptions} onChange={(value) => onChange("day", value)} ariaLabel="روز برگزاری" /></label><label>شروع<input type="number" min="7" max="18.5" step="0.5" value={schedule.start} onChange={(event) => onChange("start", event.target.value)} /></label><label>پایان<input type="number" min="7.5" max="19" step="0.5" value={schedule.end} onChange={(event) => onChange("end", event.target.value)} /></label></div>;
 }

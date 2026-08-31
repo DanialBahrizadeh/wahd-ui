@@ -4,8 +4,20 @@ import { useLessonContext } from "../contexts/LessonContext";
 import type { Lesson } from "../types/lesson";
 import LessonDetails from "./LessonDetails";
 import LessonItem from "./LessonItem";
+import CustomSelect, { type SelectOption } from "./CustomSelect";
 
 type SidebarProps = { isOpen: boolean; onClose: () => void };
+
+const collegeOptions: SelectOption[] = [
+  { value: "11-1", label: "مهندسی برق" }, { value: "19-1", label: "مهندسی کامپیوتر" },
+  { value: "22-1", label: "مهندسی عمران" }, { value: "33-1", label: "مهندسی مکانیک" },
+  { value: "42-1", label: "فیزیک (مردان)" }, { value: "42-0", label: "فیزیک (بانوان)" },
+  { value: "44-1", label: "علوم" }, { value: "48-1", label: "شیمی" },
+  { value: "55-1", label: "عمومی (مردان)" }, { value: "55-0", label: "عمومی (بانوان)" },
+  { value: "57-1", label: "ریاضی" }, { value: "66-1", label: "صنایع" },
+  { value: "77-1", label: "مهندسی نقشه‌برداری" }, { value: "88-1", label: "مهندسی هوافضا" },
+  { value: "99-1", label: "مهندسی و علم مواد" },
+];
 
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { hoveredLesson } = useLessonContext();
@@ -68,18 +80,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         <button type="button" className="icon-button sidebar-close" onClick={onClose} aria-label="بستن"><MdClose aria-hidden="true" /></button>
       </div>
       <div className="browser-controls">
-        <label htmlFor="college-select">دانشکده یا گروه</label>
-        <select id="college-select" className="college-id-input" value={collegeIdAndGender} onChange={(event) => setCollegeIdAndGender(event.target.value)}>
-          <option value="">انتخاب دانشکده</option>
-          <option value="11-1">مهندسی برق</option><option value="19-1">مهندسی کامپیوتر</option>
-          <option value="22-1">مهندسی عمران</option><option value="33-1">مهندسی مکانیک</option>
-          <option value="42-1">فیزیک (مردان)</option><option value="42-0">فیزیک (بانوان)</option>
-          <option value="44-1">علوم</option><option value="48-1">شیمی</option>
-          <option value="55-1">عمومی (مردان)</option><option value="55-0">عمومی (بانوان)</option>
-          <option value="57-1">ریاضی</option><option value="66-1">صنایع</option>
-          <option value="77-1">مهندسی نقشه‌برداری</option><option value="88-1">مهندسی هوافضا</option>
-          <option value="99-1">مهندسی و علم مواد</option>
-        </select>
+        <span className="control-label">دانشکده یا گروه</span>
+        <CustomSelect value={collegeIdAndGender} options={collegeOptions} onChange={setCollegeIdAndGender} placeholder="انتخاب دانشکده" ariaLabel="دانشکده یا گروه" />
         <label className="search-field"><MdSearch aria-hidden="true" /><span className="sr-only">جستجوی درس</span>
           <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="نام درس، استاد یا کد..." disabled={!collegeIdAndGender} />
         </label>
