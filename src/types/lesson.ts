@@ -2,7 +2,8 @@ export type Sex = 0 | 1 | 2;
 export type Schedule = { day: number; start: number; end: number };
 export type Lesson = {
   id: string;
-  // collegeId: string;
+  collegeId?: string;
+  sourceGender?: "0" | "1";
   // collegeName: string;
   // lessonGruopId: string;
   // lessonGruopName: string;
@@ -13,7 +14,7 @@ export type Lesson = {
   cap: string;
   signin: string;
   // waitingList: string;
-  // sex: Sex;
+  sex?: Sex;
   teacher: string;
   place: string;
   classTime: Schedule[];

@@ -40,8 +40,15 @@ export default function Plan() {
   };
   const closeDialog = () => { dialogRef.current?.close(); setSelectedLessonId(null); };
   const selectedLesson = lessons.find((lesson) => lesson.id === selectedLessonId);
-  const showPreview = hoveredLesson && !lessonsId.has(hoveredLesson.id);
-  const previewConflicts = showPreview ? isLessonConflicting(hoveredLesson, lessons) : false;
+  const currentHoveredLesson = hoveredLesson && lessons.find((lesson) => lesson.id === hoveredLesson.id);
+  const hoveredScheduleChanged = Boolean(currentHoveredLesson && hoveredLesson && (
+    currentHoveredLesson.examDate !== hoveredLesson.examDate ||
+    JSON.stringify(currentHoveredLesson.classTime) !== JSON.stringify(hoveredLesson.classTime)
+  ));
+  const showPreview = hoveredLesson && (!lessonsId.has(hoveredLesson.id) || hoveredScheduleChanged);
+  const previewConflicts = showPreview
+    ? isLessonConflicting(hoveredLesson, lessons.filter((lesson) => lesson.id !== hoveredLesson.id))
+    : false;
 
   return <section className="plan" aria-labelledby="plan-title">
     <div className="plan-header">

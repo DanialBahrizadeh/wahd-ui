@@ -21,7 +21,7 @@ export const isLessonConflicting = (
   lessons: Lesson[],
 ): boolean => {
   //if examDate conflict
-  if (lessons.some((l) => l.examDate === lesson.examDate)) return true;
+  if (lesson.examDate && lessons.some((l) => l.examDate === lesson.examDate)) return true;
 
   // if classTime conflict
   return lesson.classTime.some((schedule) =>
@@ -38,7 +38,7 @@ export const getLessonConflictReason = (
   lesson: Lesson,
   lessons: Lesson[],
 ): LessonConflictReason => {
-  if (lessons.some((selected) => selected.examDate === lesson.examDate))
+  if (lesson.examDate && lessons.some((selected) => selected.examDate === lesson.examDate))
     return "exam";
   if (
     lesson.classTime.some((schedule) =>
