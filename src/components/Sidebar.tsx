@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { MdClose, MdMenuBook, MdSearch } from "react-icons/md";
 import { useLessonContext } from "../contexts/LessonContext";
 import type { Lesson } from "../types/lesson";
+import { getSearchQueryVariants, matchesSearchQuery } from "../utils/search";
 import LessonDetails from "./LessonDetails";
 import LessonItem from "./LessonItem";
 import CustomSelect, { type SelectOption } from "./CustomSelect";
@@ -59,11 +60,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   }, [hoveredLesson]);
 
   const filteredLessons = useMemo(() => {
-    const normalizedQuery = query.trim().toLocaleLowerCase("fa");
-    if (!normalizedQuery) return availableLessons;
+    const queryVariants = getSearchQueryVariants(query);
+    if (queryVariants.length === 0) return availableLessons;
     return availableLessons.filter((lesson) =>
       [lesson.lessonName, lesson.teacher, lesson.lessonId].some((value) =>
-        value?.toLocaleLowerCase("fa").includes(normalizedQuery),
+        matchesSearchQuery(value, queryVariants),
       ),
     );
   }, [availableLessons, query]);
