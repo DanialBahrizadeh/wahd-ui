@@ -1,10 +1,14 @@
-import { MdMenuBook } from "react-icons/md";
+import { MdDarkMode, MdLightMode, MdMenuBook } from "react-icons/md";
 import { useLessonContext } from "../contexts/LessonContext";
 
 export default function Header({
   onOpenBrowser,
+  theme,
+  onToggleTheme,
 }: {
   onOpenBrowser: () => void;
+  theme: "light" | "dark";
+  onToggleTheme: () => void;
 }) {
   const { lessons } = useLessonContext();
   const credits = lessons.reduce(
@@ -25,6 +29,15 @@ export default function Header({
         </div>
       </div>
       <div className="header-actions">
+        <button
+          className="icon-button theme-toggle"
+          onClick={onToggleTheme}
+          type="button"
+          aria-label={theme === "dark" ? "فعال‌کردن حالت روشن" : "فعال‌کردن حالت تاریک"}
+          title={theme === "dark" ? "حالت روشن" : "حالت تاریک"}
+        >
+          {theme === "dark" ? <MdLightMode aria-hidden="true" /> : <MdDarkMode aria-hidden="true" />}
+        </button>
         <div
           className="plan-summary"
           aria-label={`${lessons.length} درس و ${credits} واحد انتخاب شده`}
