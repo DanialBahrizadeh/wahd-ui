@@ -1,11 +1,19 @@
-import { MdAdd, MdCheck, MdErrorOutline } from "react-icons/md";
+import { useState } from "react";
+import { MdAdd, MdCheck, MdContentCopy, MdErrorOutline } from "react-icons/md";
 import { useLessonContext } from "../contexts/LessonContext";
 import type { Lesson } from "../types/lesson";
 import { getLessonConflictReason } from "../utils/lessonConfilicting";
 
-export default function LessonItem(props: Lesson) {
+type LessonItemProps = Lesson & {
+  detailsId?: string;
+  previewLesson?: Lesson;
+  updated?: boolean;
+  updateConflicts?: boolean;
+};
+
+export default function LessonItem({ detailsId = "active-lesson-details", previewLesson, updated = false, updateConflicts = false, ...lesson }: LessonItemProps) {
   const { lessonsId, setLessons, setHoveredLesson, lessons } = useLessonContext();
-  const lesson = props;
+  const [copied, setCopied] = useState(false);
   const selected = lessonsId.has(lesson.id);
   const conflictReason = selected ? null : getLessonConflictReason(lesson, lessons);
   const conflicting = conflictReason !== null;
@@ -20,10 +28,20 @@ export default function LessonItem(props: Lesson) {
     setLessons((current) => [...current, lesson]);
   };
 
+  const copyLessonCode = async () => {
+    try {
+      await navigator.clipboard.writeText(lesson.lessonId);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1500);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return <article
-    className={`lesson-card${selected ? " selected" : ""}${conflicting ? " conflicting" : ""}`}
-    onMouseEnter={() => setHoveredLesson(lesson)} onMouseLeave={() => setHoveredLesson(null)}
-    onFocus={() => setHoveredLesson(lesson)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setHoveredLesson(null); }}
+    className={`lesson-card${selected ? " selected" : ""}${conflicting ? " conflicting" : ""}${updated ? " has-update" : ""}${updateConflicts ? " has-conflicting-update" : ""}`}
+    onMouseEnter={() => setHoveredLesson(previewLesson ?? lesson)} onMouseLeave={() => setHoveredLesson(null)}
+    onFocus={() => setHoveredLesson(previewLesson ?? lesson)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setHoveredLesson(null); }}
   >
     <button
       type="button"
@@ -31,11 +49,15 @@ export default function LessonItem(props: Lesson) {
       onClick={toggleLesson}
       aria-disabled={conflicting}
       aria-pressed={selected}
-      aria-describedby="active-lesson-details"
+      aria-describedby={detailsId}
     >
       <span className="lesson-card-main"><strong>{lesson.lessonName}</strong><span>{lesson.teacher || "استاد اعلام نشده"}</span></span>
       <span className="lesson-state-icon" aria-hidden="true">{selected ? <MdCheck /> : conflicting ? <MdErrorOutline /> : <MdAdd />}</span>
-      <span className="lesson-card-meta"><span dir="ltr">{lesson.lessonId}</span><span>{lesson.credits} واحد</span><span className="state-label">{stateLabel}</span></span>
+      <span className="lesson-card-meta"><span dir="ltr">{lesson.lessonId}</span><span>{lesson.credits} واحد</span><span className="state-label">{updated ? "زمان‌بندی جدید" : stateLabel}</span></span>
+    </button>
+    <button type="button" className="copy-lesson-code" onClick={() => void copyLessonCode()} aria-label={`کپی کد درس ${lesson.lessonName}`} title="کپی کد درس">
+      {copied ? <MdCheck aria-hidden="true" /> : <MdContentCopy aria-hidden="true" />}
+      <span aria-live="polite">{copied ? "کپی شد" : "کپی کد"}</span>
     </button>
   </article>;
 }
