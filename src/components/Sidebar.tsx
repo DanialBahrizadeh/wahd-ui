@@ -21,6 +21,14 @@ const collegeOptions: SelectOption[] = [
   { value: "99-1", label: "مهندسی و علم مواد" },
 ];
 
+const facultyIds = new Set(["11", "19", "20", "21", "22", "33", "42", "44", "48", "55", "57", "66", "77", "88", "99"]);
+
+function getLessonCollegeId(lesson: Lesson) {
+  if (lesson.collegeId && facultyIds.has(String(lesson.collegeId))) return String(lesson.collegeId);
+  const idCollegeId = lesson.id.slice(4, 6);
+  return facultyIds.has(idCollegeId) ? idCollegeId : null;
+}
+
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { hoveredLesson, setHoveredLesson, lessons, setLessons, plans, activePlanId } = useLessonContext();
   const [activeTab, setActiveTab] = useState<"browser" | "plan">("browser");
@@ -107,7 +115,8 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
     try {
       const refreshed = await Promise.all(lessons.map(async (lesson) => {
-        const collegeId = lesson.collegeId ?? lesson.id.slice(3, 5);
+        const collegeId = getLessonCollegeId(lesson);
+        if (!collegeId) return null;
         const genders: ("0" | "1")[] = lesson.sourceGender ? [lesson.sourceGender] : lesson.sex === 0 ? ["0"] : lesson.sex === 1 ? ["1"] : ["1", "0"];
         for (const gender of genders) {
           const match = (await fetchGroup(collegeId, gender)).find((candidate) => candidate.id === lesson.id);
